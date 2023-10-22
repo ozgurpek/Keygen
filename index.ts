@@ -1,13 +1,13 @@
-const base = "245679WERTYPASDFGJKLZXCBM";
+const base = "245679WERTYPASDFGJKLZXCBQ0O1INM";
 
 function convert(num: number) {
     let retVal: string = "";
     let n: number = num;
     do {
-        const mod: number = Math.floor(n % base.length);
+        const mod: number = n % base.length;
         retVal = base[mod] + retVal;
         n = Math.floor(n / base.length);
-    }while (n > 1);
+    }while (n > 0);
     return retVal;
  }
 
@@ -53,11 +53,11 @@ function convert(num: number) {
  function convertBack(key: string): number {
      let retVal: number = 0;
      const size = key.length;
-     for (let i = size - 1; i >= 0; --i) {
-         const multiplier = Math.pow(base.length, size - i - 1);
-         const letter = key[i];
-         const index = base.indexOf(letter);
-         retVal += (multiplier * index);
+     for (let i = 0; i < size; ++i) {
+        const letter = key[i];
+        const letterIndex = base.indexOf(letter);
+        const multiplier = Math.pow(base.length, size - 1 - i);
+        retVal += (multiplier * letterIndex);
      }
      return retVal;
  }
@@ -100,9 +100,9 @@ function parseKey(key: string): {
 
 }
 
-console.log("Starting application %%%%%");
+console.log("Starting application");
 
-const productId = Math.floor(Math.random() * 9999);
+const productId = Math.floor(Math.random() * 99999);
 const sequenceNumber = Math.floor(Math.random() * 9999);
 const userId = Math.floor(Math.random() * 9999);
 const dashedKey = generateKey(productId, sequenceNumber, userId);
