@@ -4,11 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rm -rf node_modules && rm -f `find . -name \"*js\"`",
+    "build": "tsc",
+    "test": "mocha --reporter spec"
   },
-  "author": "",
+  "author": "Ozgur Pekcagliyan",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^20.8.7"
+    "@types/chai": "^4.3.9",
+    "@types/mocha": "^10.0.3",
+    "@types/node": "^20.8.7",
+    "chai": "^4.3.10",
+    "chai-exclude": "^2.1.0",
+    "mocha": "^10.2.0"
+  },
+  "dependencies": {
+    "typescript": "^5.2.2"
   }
 }
