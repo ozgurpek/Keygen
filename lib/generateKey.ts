@@ -27,7 +27,11 @@ function convert(num: number) {
     const convertedUserId = convert(userIdWithTimeStamp);
     const convertedSalt = convert(salt);
 
-    let key = convertedUserId + '-' + convertedSequenceNumber + '-' + convertedTimeStamp + '-' + convertedSalt + '-' + convertedProductId;
+    let key = [convertedUserId,
+        convertedSequenceNumber,
+        convertedTimeStamp,
+        convertedSalt,
+        convertedProductId].join('-');
 
     
     key += '-' + calculateCheckSum(key);
