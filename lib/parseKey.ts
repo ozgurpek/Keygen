@@ -6,7 +6,7 @@ type ParsedKey = {
     timeStamp: number;
     sequenceNumber: number;
     salt: number;
-    productId: number
+    productId: number;
 };
 
 function convertBack(key: string): number {
