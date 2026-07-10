@@ -9,7 +9,10 @@
     "test": "npm run build && mocha --reporter spec"
   },
   "author": "Ozgur Pekcagliyan",
-  "license": "ISC",
+  "license": "CC-BY-SA-4.0 license",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "devDependencies": {
     "@faker-js/faker": "^10.5.0",
     "@types/chai": "^5.2.3",
