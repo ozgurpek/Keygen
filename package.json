@@ -10,6 +10,9 @@
   },
   "author": "Ozgur Pekcagliyan",
   "license": "CC-BY-SA-4.0 license",
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@faker-js/faker": "^10.5.0",
     "@types/chai": "^5.2.3",
