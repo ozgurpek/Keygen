@@ -15,16 +15,23 @@ let parsedKey: ParsedKey;
 let productId: number;
 let sequenceNumber: number;
 let userId: number;
+const keyBase = "0123456789ABCDEF";
 
 /**
  * Creates a key with random identifiers and parses it for the test assertions.
  *
  * @returns Nothing.
  */
-function setUpGeneratedKey(): void {
+function setUpGeneratedKey(keyBase?: string): void {
   productId = faker.number.int();
   sequenceNumber = faker.number.int();
   userId = faker.number.int();
+
+  if (keyBase) {
+    generatedKey = generateKey(productId, sequenceNumber, userId, keyBase);
+    parsedKey = parseKey(generatedKey, keyBase);
+    return;
+  }
 
   generatedKey = generateKey(productId, sequenceNumber, userId);
   parsedKey = parseKey(generatedKey);
@@ -68,11 +75,12 @@ function expectParsedValues(): void {
 }
 
 /** Registers the key-generation test suite and its assertions. */
-function defineKeygenTests(): void {
-  before(setUpGeneratedKey);
+function defineKeygenTests(keyBase?: string): void {
+  before(() => setUpGeneratedKey(keyBase));
   it("should return a key", expectGeneratedKey);
   it("should parse the key", expectParsedKey);
   it("should parse correctly", expectParsedValues);
 }
 
-describe("testing keygen", defineKeygenTests);
+describe("testing keygen with the default base", () => defineKeygenTests());
+describe("testing keygen with a custom base", () => defineKeygenTests(keyBase));

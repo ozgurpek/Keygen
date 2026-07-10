@@ -13,15 +13,16 @@ type ParsedKey = {
  * Converts a value encoded in the key character base back to a number.
  *
  * @param key - The encoded value to decode.
+ * @param baseLength - The length of the key base
  * @returns The decoded numeric value.
  */
-function convertBack(key: string): number {
+function convertBack(key: string, baseLength: number): number {
   let retVal: number = 0;
   const size = key.length;
   for (let i = 0; i < size; ++i) {
     const letter = key[i];
     const letterIndex = base.indexOf(letter);
-    const multiplier = Math.pow(base.length, size - 1 - i);
+    const multiplier = Math.pow(baseLength, size - 1 - i);
     retVal += multiplier * letterIndex;
   }
   return retVal;
@@ -39,15 +40,18 @@ function convertBack(key: string): number {
  * make the embedded values secret.
  *
  * @param key - The hyphen-separated key to parse.
+ * @param keyBase - Optional string to be used as key base
  * @returns The identifiers, timestamp, and salt embedded in the key.
  * @throws {RangeError} If the key does not contain exactly six segments.
  * @throws {ReferenceError} If the key checksum is invalid.
  */
-function parseKey(key: string): ParsedKey {
+function parseKey(key: string, keyBase: string = base): ParsedKey {
   const parts = key.split("-");
   if (parts.length != 6) {
     throw RangeError("Key is incorrect");
   }
+
+  const baseLength = keyBase.length;
 
   const convertedUserId = parts[0];
   const convertedSequenceNumber = parts[1];
@@ -73,24 +77,24 @@ function parseKey(key: string): ParsedKey {
 
   // The salt is self-contained. Its base-length remainder is the offset added
   // to the timestamp, so recover the timestamp before attempting the IDs.
-  const salt: number = convertBack(convertedSalt);
+  const salt: number = convertBack(convertedSalt, baseLength);
   const timeStamp: number =
-    convertBack(convertedTimeStamp) - Math.floor(salt % base.length);
+    convertBack(convertedTimeStamp, baseLength) - Math.floor(salt % baseLength);
 
   // `generateKey` applied this same offset to every ID. Recompute and subtract
   // it from each decoded segment to reverse the generation transformation.
   const userId: number =
-    convertBack(convertedUserId) -
-    Math.floor(timeStamp % base.length) -
-    Math.floor(salt % base.length);
+    convertBack(convertedUserId, baseLength) -
+    Math.floor(timeStamp % baseLength) -
+    Math.floor(salt % baseLength);
   const sequenceNumber: number =
-    convertBack(convertedSequenceNumber) -
-    Math.floor(timeStamp % base.length) -
-    Math.floor(salt % base.length);
+    convertBack(convertedSequenceNumber, baseLength) -
+    Math.floor(timeStamp % baseLength) -
+    Math.floor(salt % baseLength);
   const productId: number =
-    convertBack(convertedProductId) -
-    Math.floor(timeStamp % base.length) -
-    Math.floor(salt % base.length);
+    convertBack(convertedProductId, baseLength) -
+    Math.floor(timeStamp % baseLength) -
+    Math.floor(salt % baseLength);
 
   return {
     userId,

@@ -5,15 +5,16 @@ import { base } from "./constants";
  * Converts a non-negative number to its representation in the key character base.
  *
  * @param num - The number to encode.
+ * @param length - The length of the keybase
  * @returns The encoded number.
  */
-function convert(num: number): string {
+function convert(num: number, length: number): string {
   let retVal: string = "";
   let n: number = num;
   do {
-    const mod: number = n % base.length;
+    const mod: number = n % length;
     retVal = base[mod] + retVal;
-    n = Math.floor(n / base.length);
+    n = Math.floor(n / length);
   } while (n > 0);
   return retVal;
 }
@@ -35,40 +36,44 @@ function convert(num: number): string {
  * @param productId - The product identifier to include in the key.
  * @param sequenceNumber - The sequence number to include in the key.
  * @param userId - The user identifier to include in the key.
+ * @param keyBase - Optional base to be used for key generation
  * @returns A hyphen-separated, checksum-protected key.
  */
 function generateKey(
   productId: number,
   sequenceNumber: number,
   userId: number,
+  keyBase: string = base
 ): string {
   const timeStamp = Date.now();
   const salt = Math.floor(Math.random() * 9999999999999);
 
+  const length = keyBase.length;
+
   // Store a timestamp shifted by the salt-derived offset. `parseKey` first
   // recovers this timestamp, then uses the same offset to recover every ID.
-  const saltedTimestamp = timeStamp + Math.floor(salt % base.length);
+  const saltedTimestamp = timeStamp + Math.floor(salt % length);
 
   // Apply the same timestamp- and salt-derived offset to all caller-provided
   // IDs. Keeping this calculation identical makes the transformation reversible.
   const productIdWithTimeStamp =
     productId +
-    Math.floor(timeStamp % base.length) +
-    Math.floor(salt % base.length);
+    Math.floor(timeStamp % length) +
+    Math.floor(salt % length);
   const userIdWithTimeStamp =
     userId +
-    Math.floor(timeStamp % base.length) +
-    Math.floor(salt % base.length);
+    Math.floor(timeStamp % length) +
+    Math.floor(salt % length);
   const saltedSequenceNumber =
     sequenceNumber +
-    Math.floor(timeStamp % base.length) +
-    Math.floor(salt % base.length);
+    Math.floor(timeStamp % length) +
+    Math.floor(salt % length);
 
-  const convertedTimeStamp = convert(saltedTimestamp);
-  const convertedProductId = convert(productIdWithTimeStamp);
-  const convertedSequenceNumber = convert(saltedSequenceNumber);
-  const convertedUserId = convert(userIdWithTimeStamp);
-  const convertedSalt = convert(salt);
+  const convertedTimeStamp = convert(saltedTimestamp, length);
+  const convertedProductId = convert(productIdWithTimeStamp, length);
+  const convertedSequenceNumber = convert(saltedSequenceNumber, length);
+  const convertedUserId = convert(userIdWithTimeStamp, length);
+  const convertedSalt = convert(salt, length);
 
   // The segment order is part of the on-disk/public key format. Keep it aligned
   // with the corresponding extraction order in `parseKey`.
