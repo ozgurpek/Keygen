@@ -1,5 +1,13 @@
 import { base } from "./constants";
 
+/**
+ * Calculates the checksum character for a key that does not yet include one.
+ *
+ * Hyphens are ignored while calculating the weighted sum.
+ *
+ * @param keyWithoutCheckSum - The hyphen-separated key segments.
+ * @returns The checksum character from the configured character base.
+ */
 function calculateCheckSum(keyWithoutCheckSum: string): string {
   let count = 0;
   let sum = 0;

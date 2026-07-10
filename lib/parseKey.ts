@@ -9,6 +9,12 @@ type ParsedKey = {
   productId: number;
 };
 
+/**
+ * Converts a value encoded in the key character base back to a number.
+ *
+ * @param key - The encoded value to decode.
+ * @returns The decoded numeric value.
+ */
 function convertBack(key: string): number {
   let retVal: number = 0;
   const size = key.length;
@@ -21,6 +27,14 @@ function convertBack(key: string): number {
   return retVal;
 }
 
+/**
+ * Validates and decodes a generated key.
+ *
+ * @param key - The hyphen-separated key to parse.
+ * @returns The identifiers, timestamp, and salt embedded in the key.
+ * @throws {RangeError} If the key does not contain exactly six segments.
+ * @throws {ReferenceError} If the key checksum is invalid.
+ */
 function parseKey(key: string): ParsedKey {
   const parts = key.split("-");
   if (parts.length != 6) {
