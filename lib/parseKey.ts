@@ -13,16 +13,16 @@ type ParsedKey = {
  * Converts a value encoded in the key character base back to a number.
  *
  * @param key - The encoded value to decode.
- * @param baseLength - The length of the key base
+ * @param keyBase - The string to be used as key base
  * @returns The decoded numeric value.
  */
-function convertBack(key: string, baseLength: number): number {
+function convertBack(key: string, keyBase: string): number {
   let retVal: number = 0;
   const size = key.length;
   for (let i = 0; i < size; ++i) {
     const letter = key[i];
-    const letterIndex = base.indexOf(letter);
-    const multiplier = Math.pow(baseLength, size - 1 - i);
+    const letterIndex = keyBase.indexOf(letter);
+    const multiplier = Math.pow(keyBase.length, size - 1 - i);
     retVal += multiplier * letterIndex;
   }
   return retVal;
@@ -77,22 +77,22 @@ function parseKey(key: string, keyBase: string = base): ParsedKey {
 
   // The salt is self-contained. Its base-length remainder is the offset added
   // to the timestamp, so recover the timestamp before attempting the IDs.
-  const salt: number = convertBack(convertedSalt, baseLength);
+  const salt: number = convertBack(convertedSalt, keyBase);
   const timeStamp: number =
-    convertBack(convertedTimeStamp, baseLength) - Math.floor(salt % baseLength);
+    convertBack(convertedTimeStamp, keyBase) - Math.floor(salt % baseLength);
 
   // `generateKey` applied this same offset to every ID. Recompute and subtract
   // it from each decoded segment to reverse the generation transformation.
   const userId: number =
-    convertBack(convertedUserId, baseLength) -
+    convertBack(convertedUserId, keyBase) -
     Math.floor(timeStamp % baseLength) -
     Math.floor(salt % baseLength);
   const sequenceNumber: number =
-    convertBack(convertedSequenceNumber, baseLength) -
+    convertBack(convertedSequenceNumber, keyBase) -
     Math.floor(timeStamp % baseLength) -
     Math.floor(salt % baseLength);
   const productId: number =
-    convertBack(convertedProductId, baseLength) -
+    convertBack(convertedProductId, keyBase) -
     Math.floor(timeStamp % baseLength) -
     Math.floor(salt % baseLength);
 

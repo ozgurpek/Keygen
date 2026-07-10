@@ -5,15 +5,16 @@ import { base } from "./constants";
  * Converts a non-negative number to its representation in the key character base.
  *
  * @param num - The number to encode.
- * @param length - The length of the keybase
+ * @param keyBase - Keybase to be used
  * @returns The encoded number.
  */
-function convert(num: number, length: number): string {
+function convert(num: number, keyBase: string): string {
   let retVal: string = "";
   let n: number = num;
+  const length: number = keyBase.length;
   do {
     const mod: number = n % length;
-    retVal = base[mod] + retVal;
+    retVal = keyBase[mod] + retVal;
     n = Math.floor(n / length);
   } while (n > 0);
   return retVal;
@@ -63,11 +64,11 @@ function generateKey(
   const saltedSequenceNumber =
     sequenceNumber + Math.floor(timeStamp % length) + Math.floor(salt % length);
 
-  const convertedTimeStamp = convert(saltedTimestamp, length);
-  const convertedProductId = convert(productIdWithTimeStamp, length);
-  const convertedSequenceNumber = convert(saltedSequenceNumber, length);
-  const convertedUserId = convert(userIdWithTimeStamp, length);
-  const convertedSalt = convert(salt, length);
+  const convertedTimeStamp = convert(saltedTimestamp, keyBase);
+  const convertedProductId = convert(productIdWithTimeStamp, keyBase);
+  const convertedSequenceNumber = convert(saltedSequenceNumber, keyBase);
+  const convertedUserId = convert(userIdWithTimeStamp, keyBase);
+  const convertedSalt = convert(salt, keyBase);
 
   // The segment order is part of the on-disk/public key format. Keep it aligned
   // with the corresponding extraction order in `parseKey`.

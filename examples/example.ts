@@ -28,5 +28,7 @@ console.log(JSON.stringify(convertedObject));
 
 /** Generate ten additional unique keys for the same identifiers. */
 for (let i = 0; i < 10; ++i) {
-  console.log(generateKey(productId, sequenceNumber, userId));
+  const key = generateKey(productId, sequenceNumber, userId);
+  console.log(key);
+  console.log(JSON.stringify(parseKey(key)));
 }
