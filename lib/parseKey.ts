@@ -30,6 +30,14 @@ function convertBack(key: string): number {
 /**
  * Validates and decodes a generated key.
  *
+ * A valid key has five encoded data segments followed by a checksum. Parsing
+ * first verifies that checksum, then decodes the salt and salted timestamp.
+ * Those values reproduce the small offset added by {@link generateKey}, which
+ * is subtracted from the decoded IDs to restore the original inputs.
+ *
+ * The checksum detects accidental or simple intentional changes; it does not
+ * make the embedded values secret.
+ *
  * @param key - The hyphen-separated key to parse.
  * @returns The identifiers, timestamp, and salt embedded in the key.
  * @throws {RangeError} If the key does not contain exactly six segments.
@@ -48,6 +56,8 @@ function parseKey(key: string): ParsedKey {
   const convertedProductId = parts[4];
   const checksum = parts[5];
 
+  // Recreate exactly the portion that `generateKey` checks. The trailing
+  // checksum segment must be excluded or validation would never match.
   const keyWithouthChecksum = [
     parts[0],
     parts[1],
@@ -60,9 +70,15 @@ function parseKey(key: string): ParsedKey {
   if (checksum !== calculatedChecksum) {
     throw ReferenceError("Key is not valid");
   }
+
+  // The salt is self-contained. Its base-length remainder is the offset added
+  // to the timestamp, so recover the timestamp before attempting the IDs.
   const salt: number = convertBack(convertedSalt);
   const timeStamp: number =
     convertBack(convertedTimeStamp) - Math.floor(salt % base.length);
+
+  // `generateKey` applied this same offset to every ID. Recompute and subtract
+  // it from each decoded segment to reverse the generation transformation.
   const userId: number =
     convertBack(convertedUserId) -
     Math.floor(timeStamp % base.length) -
