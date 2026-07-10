@@ -43,7 +43,7 @@ function generateKey(
   productId: number,
   sequenceNumber: number,
   userId: number,
-  keyBase: string = base
+  keyBase: string = base,
 ): string {
   const timeStamp = Date.now();
   const salt = Math.floor(Math.random() * 9999999999999);
@@ -57,17 +57,11 @@ function generateKey(
   // Apply the same timestamp- and salt-derived offset to all caller-provided
   // IDs. Keeping this calculation identical makes the transformation reversible.
   const productIdWithTimeStamp =
-    productId +
-    Math.floor(timeStamp % length) +
-    Math.floor(salt % length);
+    productId + Math.floor(timeStamp % length) + Math.floor(salt % length);
   const userIdWithTimeStamp =
-    userId +
-    Math.floor(timeStamp % length) +
-    Math.floor(salt % length);
+    userId + Math.floor(timeStamp % length) + Math.floor(salt % length);
   const saltedSequenceNumber =
-    sequenceNumber +
-    Math.floor(timeStamp % length) +
-    Math.floor(salt % length);
+    sequenceNumber + Math.floor(timeStamp % length) + Math.floor(salt % length);
 
   const convertedTimeStamp = convert(saltedTimestamp, length);
   const convertedProductId = convert(productIdWithTimeStamp, length);
@@ -87,7 +81,7 @@ function generateKey(
 
   // Calculate the checksum before appending it; the checksum itself is not part
   // of the data it validates.
-  key += "-" + calculateCheckSum(key);
+  key += "-" + calculateCheckSum(key, keyBase);
 
   return key;
 }

@@ -70,7 +70,7 @@ function parseKey(key: string, keyBase: string = base): ParsedKey {
     parts[4],
   ].join("-");
 
-  const calculatedChecksum = calculateCheckSum(keyWithouthChecksum);
+  const calculatedChecksum = calculateCheckSum(keyWithouthChecksum, keyBase);
   if (checksum !== calculatedChecksum) {
     throw ReferenceError("Key is not valid");
   }

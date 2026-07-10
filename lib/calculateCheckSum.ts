@@ -6,14 +6,18 @@ import { base } from "./constants";
  * Hyphens are ignored while calculating the weighted sum.
  *
  * @param keyWithoutCheckSum - The hyphen-separated key segments.
+ * @param keyBase - Key base to be used
  * @returns The checksum character from the configured character base.
  */
-function calculateCheckSum(keyWithoutCheckSum: string): string {
+function calculateCheckSum(
+  keyWithoutCheckSum: string,
+  keyBase: string,
+): string {
   let count = 0;
   let sum = 0;
   for (let c of keyWithoutCheckSum) {
     if (c !== "-") {
-      const val = base.indexOf(c);
+      const val = keyBase.indexOf(c);
       sum += val;
       if (count % 2 === 1) {
         sum += val;
@@ -23,9 +27,9 @@ function calculateCheckSum(keyWithoutCheckSum: string): string {
   }
 
   sum = Math.floor((sum * count) % (count + 1));
-  sum %= base.length;
+  sum %= keyBase.length;
 
-  return base[sum];
+  return keyBase[sum];
 }
 
 export default calculateCheckSum;
