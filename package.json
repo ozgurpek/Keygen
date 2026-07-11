@@ -1,8 +1,7 @@
 {
   "name": "@ozgurpek/keygen",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Generate readable, checksum-protected keys with embedded product, sequence, and user IDs.",
-  "main": "index.js",
   "scripts": {
     "clean": "rm -rf node_modules && rm -f `find . -name \"*js\"`",
     "build": "npm install && tsc",

@@ -34,7 +34,7 @@ Compiled JavaScript is emitted alongside the TypeScript source files.
 ## Usage
 
 ```ts
-import { generateKey, parseKey } from "./index";
+import { generateKey, parseKey } from "@ozgurpek/keygen";
 
 const key = generateKey(42, 7, 1234);
 // Example shape: 1AB-9K-...-Q
